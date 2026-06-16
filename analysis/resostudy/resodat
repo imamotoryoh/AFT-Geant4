@@ -1,0 +1,12 @@
+Double_t dp_o_p1 = 1.0e-3; 
+Double_t dp_o_p2 = 6.0e-4; 
+Double_t dtheta = 4.e-3;  // rad
+
+// ------------------------------------   //
+//  The energy resolution data            //
+//  obtained from a test at RCNP.         //
+//  A result was taken from               //
+//  Koshikawa-san's presentation (2017).  //
+// -------------------------------------  //
+TF1* func1 = new TF1("func1","[0]+[1]/sqrt(x)");
+func1->SetParameters(-0.0334112, 8.07186);

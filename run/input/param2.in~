@@ -1,0 +1,64 @@
+(1)OutputROOTFile:      ../analysis/root/fiber_12Xi-3_.root
+(2)SeedFile:            ./seed/fiber_10.08cm_12Xi.seed 2
+(3)BeamMomentum[GeV/c]: 1.8 0.0
+(4)Theta[rad]:          0.0 0.0
+(5)Phi[rad]:            0.0 0.0
+(6)Target[cm]:          ch2 15.0
+(7)MinMomentum[MeV/c]:  0.0
+(8)MaxMomentum[MeV/c]:  3000.0
+(9)MinTheta[mrad]:      -0.1
+(10)MaxTheta[mrad]:     3500.0
+(11)PositronAnalFlag:   0
+(12)EMFlag:             1
+(13)DecayFlag:          0
+(14)HadronFlag:         1
+(15)ParticleGeneration: 2
+(16)Raster[cm]:         0.0 0.0 0.0
+(17)BeamOffset[cm]:     0.0 0.0 0.0
+(18)Particle(0:e-/1:e+/pi-/pi+/mu-/p/K-/K+): 7
+
+
+oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO
+oOoOoOoOoOoO Comments oOoOoOoOoOoOoOoOoOoOoOoOoO	
+oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO
+~~~~~~~~ (2) ~~~~~~~~~~~
+Seed file and Seed file flag
+Flag=0: without the seed file
+Flag=1: with the seed file (for HES-HKS coin study) 
+Flag=2: not defined yet
+
+~~~~~~~~ (3) ~~~~~~~~~~~
+Momentum in GeV
+central , width
+1.8 0.0
+
+~~~~~~~~ (4) ~~~~~~~~~~~
+Theta in rad
+central , width
+0.2 0.2
+
+~~~~~~~~ (5) ~~~~~~~~~~~
+Phi in rad
+central , width
+3.14159 3.14159
+
+~~~~~~~~ (6) ~~~~~~~~~~~
+Target and target thickness in cm
+Carbon 0.0500
+ch2 0.4847
+Lithium 0.3446
+Berylium 0.1018
+Boron 0.0240
+Water 0.5000(without foils)
+Chromium 0.0215
+Lead 0.1
+Tungsten 0.1
+
+~~~~~~~~ (18) ~~~~~~~~~~~
+Particle species-->
+0:e-
+1:e+
+2:pi-
+3:pi+
+4:mu-
+5:proton
