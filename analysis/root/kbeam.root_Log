@@ -1,0 +1,18 @@
+(1)OutputROOTFile: ../analysis/root/kbeam.root
+(2)SeedFile: ./seed/No_Use 0
+(3)BeamMomentum[GeV/c]: 1.8 0
+(4)Theta[rad]: 0 0
+(5)Phi[rad]: 0 0
+(6)Target[cm]: ch2 15 cm
+(7)MinMomentum[MeV/c]: 0
+(8)MaxMomentum[MeV/c]: 3000
+(9)MinTheta[mrad]: -0.1
+(10)MaxTheta[mrad]: 3500
+(11)PositronAnalFlag: 0
+(12)EMFlag: 1
+(13)DecayFlag: 1
+(14)HadronFlag: 1
+(15)ParticleGeneration: 2
+(16)Raster[cm]: 0,0,10.08
+(17)BeamOffset[cm]: 0,0,0
+(18)Particle(0:e-/1:e+/pi-/pi+/mu-/p/K-/K+): 6

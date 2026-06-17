@@ -11,7 +11,8 @@
 # Create a scene handler for a specific graphics system
 # (Edit the next line(s) to choose another graphics system)
 #
-/vis/open OGLIX 600x600-0+0
+/vis/open TSGQtZB
+# 600x600-0+0
 #
 ####/vis/open DAWNFILE
 #
@@ -34,4 +35,4 @@
 #
 /gun/particle e-
 #/gun/particle proton
-/run/beamOn 150
+/run/beamOn 10

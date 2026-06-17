@@ -38,7 +38,7 @@ void convert(){
 
   //TFile* f1 = new TFile("test.root");
   //TFile* f1 = new TFile("../fiber_12Xi-1.root");
-  TFile* f1 = new TFile("../kbeam.root");
+  TFile* f1 = new TFile("../root/kbeam.root");
   TTree* t1 = (TTree*)f1->Get("tree");
   //Double_t de[nfibers];
   //double ok[nfibers];

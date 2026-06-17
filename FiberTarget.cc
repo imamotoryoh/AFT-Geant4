@@ -4,7 +4,8 @@
 */
 
 #include "FiberTargetDetectorConstruction.hh"
-#include "FiberTargetPhysicsList.hh"
+//#include "FiberTargetPhysicsList.hh" for my geant ver. 11.4.2
+#include "FTFP_BERT.hh"
 #include "FiberTargetPrimaryGeneratorAction.hh"
 #include "FiberTargetSteppingAction.hh"
 #include "FiberTargetRunAction.hh"
@@ -19,9 +20,10 @@
 #include "G4UItcsh.hh"
 #include "Randomize.hh"
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE
+#include "G4UIExecutive.hh"
 #include "G4VisExecutive.hh"
-#endif
+//#endif
 
 
 
@@ -65,7 +67,8 @@ int main(int argc,char** argv)
   FiberTargetDetectorConstruction* detector = new FiberTargetDetectorConstruction(paramMan);
   runManager->SetUserInitialization(detector);
   //G4VUserPhysicsList* physics = new FiberTargetPhysicsList;
-  G4VUserPhysicsList* physics = new FiberTargetPhysicsList(paramMan);
+  //G4VUserPhysicsList* physics = new FiberTargetPhysicsList(paramMan);
+  G4VUserPhysicsList* physics = new FTFP_BERT; // instant deal
   runManager->SetUserInitialization(physics);
   
   // User Action classes
@@ -85,28 +88,33 @@ int main(int argc,char** argv)
   // Get the pointer to the User Interface manager
   G4UImanager * UI = G4UImanager::GetUIpointer();  
 
-#ifdef G4VIS_USE
+  //#ifdef G4VIS_USE
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
-#endif    
+  //#endif    
   
-  G4UIsession * session = 0;
-#ifdef G4UI_USE_TCSH
-  session = new G4UIterminal(new G4UItcsh);      
-#else
-  session = new G4UIterminal();
-#endif
+//  G4UIsession * session = 0;
+// #ifdef G4UI_USE_TCSH
+//   session = new G4UIterminal(new G4UItcsh);      
+// #else
+//   session = new G4UIterminal();
+// #endif
+
+  G4UIExecutive* ui = new G4UIExecutive(argc, argv); 
+
   G4String command = "/control/execute " + macFile;
   //UI->ApplyCommand("/control/execute vis.mac");     
   //UI->ApplyCommand("/control/execute vrml.mac");     
   //UI->ApplyCommand("/control/execute run.mac");     
   UI->ApplyCommand( command );
-  //session->SessionStart();
-  delete session;
+  //  session->SessionStart();
+  ui->SessionStart();
+  //  delete session;
+  delete ui;
   
-#ifdef G4VIS_USE
+  //#ifdef G4VIS_USE
   delete visManager;
-#endif     
+  //#endif     
   
   //cout << endl;
   G4cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << G4endl;
