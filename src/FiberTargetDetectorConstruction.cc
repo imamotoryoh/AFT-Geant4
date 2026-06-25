@@ -360,7 +360,7 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   //rotTarget->rotateY(-17.0 * deg);//Rotation of target
 
   
-  //G4LogicalVolume *targetLV; 
+  //G4LogicalVolume *targetLV;
   int fiberflag = 1;
   
   G4Box *targetSolid = new G4Box( "Target",
@@ -377,7 +377,9 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   double fiber_phi_core = 2.94*mm;
   double fiber_phi_clad = 0.06*mm;
   double fiber_phi = fiber_phi_core + fiber_phi_clad;
-  
+  double fiber_distance_xxp = 2.7*mm;
+  double fiber_distance_xpy = 3.1*mm;
+  double fiber_distance_seg = 3.1*mm;
   
   G4EllipticalTube* fiber_core_solid_x 
     = new G4EllipticalTube("fiber_core_solid_x",
@@ -407,11 +409,11 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   // ~~~~~~~ Create logical volumes of y layers ~~~~~~~~~~
   G4EllipticalTube* fiber_core_solid_y 
     = new G4EllipticalTube("fiber_core_solid_y",
-			   fiber_phi_core/2.0, fiber_phi_core/2.0, 15.0/2.0*cm );
+			   fiber_phi_core/2.0, fiber_phi_core/2.0, 10.0/2.0*cm );
   G4Tubs* fiber_clad_solid_y
     = new G4Tubs("fiber_clad_solid_y",
 		 fiber_phi_core/2.0, fiber_phi/2.0, //Min and Max radii
-		 15.0*cm/2.0,//height
+		 10.0*cm/2.0,//height
 		 0.0,//[rad]
 		 2.0*3.14159);//[rad]
   
@@ -426,21 +428,28 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   //double fiber_y =  50.0*mm;
   //double fiber_z = 100.0*mm;
 
-  //int fiber_tot_layers = 10; // 1-layer = xx'yy'
   int fiber_tot_layers = 9; // 1-layer = xx'yy' // default
-  //int fiber_tot_layers = 5; // 1-layer = xx'yy
-  double fiber_posz   = 0.0;
-  double fiber_posz_p = 0.0;
+
+  double init_poszx0 = 349.0; //AFT X0(the most front X plane) from FF (mm)
+  double init_poszy0 = 354.8; //AFT Y0(the most front Y plane) from FF (mm)
+  double z_offaft = -2.86*mm;
+  double fiber_poszx = init_poszx0 - z_offaft;
+  double fiber_poszy = init_poszy0 - z_offaft;
   
-  int fiber_nx = 50; // default
-  //int fiber_nx = 3; 
-  double fiber_startx = -1.0 * fiber_phi*((double)fiber_nx-1.0) / 2.0;
+  int fiber_nx = 32;
   //int count_x_fiber=0;
+  double xkegaki_off = -0.2*mm;
+  double x_offaft = 0.018729*mm; // X geo off (which was made by BT analysis)
+  double fiber_startx = xkegaki_off - fiber_distance_seg*15.5 - x_offaft;
+  double fiber_startxp = xkegaki_off - fiber_distance_seg*16.0 - x_offaft;
   
-  int fiber_ny = 17; // default
-  //int fiber_ny = 3;
-  double fiber_starty = -1.0 * fiber_phi*((double)fiber_ny-1.0) / 2.0;
+  int fiber_ny = 16; // default
   //int count_y_fiber = 0;
+  double ykegaki_off = 0.25*mm;
+  double y_offaft = 0.582233*mm; // Y geo off (which was made by BT analysis)
+  double fiber_starty = ykegaki_off - fiber_distance_seg*7.5 - y_offaft;
+  double fiber_startyp = ykegaki_off - fiber_distance_seg*8.0 - y_offaft;
+
   int count_fiber = 0;
   int countx=0;//, countxp=0;
   int county=0;//, countyp=0;
@@ -460,24 +469,12 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   }
   else if ( TargetMaterial!="Vacuum" && fiberflag==1 ){
     for(int layer=0 ; layer<fiber_tot_layers ; layer++){
-      //count_x_fiber = (layer+1)*100;
-      //count_y_fiber = (layer+1)*100;
-      // ~~~~ fiber z position ~~~~
-      if(layer!=0) fiber_posz   = fiber_posz_p + fiber_phi;
-      else fiber_posz=fiber_phi/2.0;
-      fiber_posz_p = fiber_posz   + fiber_phi/2.0*sqrt(3.0);
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       for(int i=0 ; i<fiber_nx ; i++){
-	//if(count_x_fiber!=0) count_x_fiber++;
-	//if(count_fiber!=0) count_fiber++;
 	countx++;
-	//G4cout << "~~~~~~~~~~~~~~~~~~~~~~~~" << countx << G4endl;
-	//countx = count_fiber;
 	// -- x --
 	new G4PVPlacement( rotFiberx
-			   //, G4ThreeVector(fiber_startx+fiber_phi*i, 0*cm, 0*cm)
-			   //, G4ThreeVector(fiber_startx+fiber_phi*i, 0*cm, fiber_posz)
-			   , G4ThreeVector(fiber_startx+fiber_phi*i, 0*cm, fiber_posz-target_shift)
+			   , G4ThreeVector(fiber_startx+fiber_distance_seg*i, 0*cm
+					   , fiber_poszx + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer )
 			   ,FiberXLV
 			   ,"FiberX" 
 			   , worldLV 
@@ -485,8 +482,8 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
 			   , countx-1 );
 			   //, 1000 );
 	new G4PVPlacement( rotFiberx
-			   //, G4ThreeVector(fiber_startx+fiber_phi*i, 0*cm, fiber_posz)
-			   , G4ThreeVector(fiber_startx+fiber_phi*i, 0*cm, fiber_posz-target_shift)
+			   , G4ThreeVector(fiber_startx+fiber_distance_seg*i, 0*cm
+					   , fiber_poszx + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   , CladXLV 
 			   ,"CladX" 
 			   , worldLV 
@@ -500,9 +497,8 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
 	// -- x' --
 	countx++;
 	new G4PVPlacement( rotFiberx
-			   , G4ThreeVector(fiber_phi/2.0 + fiber_startx + fiber_phi*i,
-					   0*cm,
-					   fiber_posz_p-target_shift)
+			   , G4ThreeVector(fiber_startxp+fiber_distance_seg*i, 0*cm
+					   , fiber_poszx + fiber_distance_xxp  + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,FiberXLV
 			   ,"FiberX" 
 			   , worldLV 
@@ -510,9 +506,8 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
 			   , countx-1 );
 			   //, 1001 );
 	new G4PVPlacement( rotFiberx
-			   , G4ThreeVector(fiber_phi/2.0 + fiber_startx + fiber_phi*i,
-					   0*cm,
-					   fiber_posz_p-target_shift)
+			   , G4ThreeVector(fiber_startxp+fiber_distance_seg*i, 0*cm
+					   , fiber_poszx + fiber_distance_xxp  + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,CladXLV
 			   ,"CladX" 
 			   , worldLV 
@@ -521,69 +516,42 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
 	
       }
       
-      // ~~~~ fiber z position ~~~~
-      fiber_posz   = fiber_posz_p + fiber_phi;
-      fiber_posz_p = fiber_posz + fiber_phi/2.0*sqrt(3.0);
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
       // -- y' ------------------------------------
       for(int i=0 ; i<fiber_ny ; i++){
-	//if(count_y_fiber!=0) count_y_fiber++;
-	//if(count_fiber!=0) count_fiber++;
-	//county = count_fiber;
-	//if(county!=0) county++;
 	county++;
 	// -- y --
 	new G4PVPlacement( rotFibery
-			   , G4ThreeVector( 0*cm,fiber_starty+fiber_phi*i, fiber_posz-target_shift)
+			   , G4ThreeVector( 0*cm,fiber_starty+fiber_distance_seg*i
+					    ,fiber_poszy + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,FiberYLV
 			   ,"FiberY" 
 			   , worldLV 
 			   , false
 			   , county-1 );
 	new G4PVPlacement( rotFibery
-			   , G4ThreeVector( 0*cm,fiber_starty+fiber_phi*i, fiber_posz-target_shift)
+			   , G4ThreeVector( 0*cm,fiber_starty+fiber_distance_seg*i
+					    , fiber_poszy + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,CladYLV
 			   ,"CladY" 
 			   , worldLV 
 			   , false
 			   , county-1 );
-//	// -- y' --
-//	//count_y_fiber++;
-//	count_fiber++;
-//	countyp = county + fiber_ny;
-//	new G4PVPlacement( rotFibery
-//			   , G4ThreeVector( 0*cm,fiber_phi/2.0+fiber_starty+fiber_phi*i,
-//					    fiber_posz_p-target_shift)
-//			   ,FiberYLV
-//			   ,"FiberY" 
-//			   , worldLV 
-//			   , false
-//			   , countyp );
-//	new G4PVPlacement( rotFibery
-//			   , G4ThreeVector( 0*cm,fiber_phi/2.0+fiber_starty+fiber_phi*i,
-//					    fiber_posz_p-target_shift)
-//			   ,CladYLV
-//			   ,"CladY" 
-//			   , worldLV 
-//			   , false
-//			   , countyp );
       }
       // -- y' ------------------------------------
       for(int i=0 ; i<fiber_ny ; i++){
 	//if(county!=0) county++;
 	county++;
 	new G4PVPlacement( rotFibery
-			   , G4ThreeVector( 0*cm,fiber_phi/2.0+fiber_starty+fiber_phi*i,
-					    fiber_posz_p-target_shift)
+			   , G4ThreeVector( 0*cm, fiber_startyp+fiber_distance_seg*i
+					    , fiber_poszy + fiber_distance_xxp + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,FiberYLV
 			   ,"FiberY" 
 			   , worldLV 
 			   , false
 			   , county-1 );
 	new G4PVPlacement( rotFibery
-			   , G4ThreeVector( 0*cm,fiber_phi/2.0+fiber_starty+fiber_phi*i,
-					    fiber_posz_p-target_shift)
+			   , G4ThreeVector( 0*cm, fiber_startyp+fiber_distance_seg*i
+					    , fiber_poszy + fiber_distance_xxp + (2*fiber_distance_xxp + 2*fiber_distance_xpy)*layer)
 			   ,CladYLV
 			   ,"CladY" 
 			   , worldLV 
@@ -606,25 +574,13 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   
   
   //Virtual Detector
-  //G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 0.5*cm);
-  //G4double vd1_x = 4.0*cm;   // [cm]
-  //G4double vd1_y = 4.0*cm;   // [cm]
-  //G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 3.5*cm);// for 5 cm target
-  //G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 6.0*cm);// for 10 cm target
   G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 8.5*cm);// for 15  cm target
-  //G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 11.0*cm);// for 20 cm target
   G4double vd1_x = 50.0*cm;   // [cm]
-  //G4double vd1_y = 4.0*cm;   // [cm]
   G4double vd1_y = 50.0*cm;   // [cm]
   G4double vd1_z = 0.001*mm; // [mm] // Default
-  //G4double vd1_z = 1.0*cm; // [mm] // Just for test, T.Gogami (20Aug2014)
-  //G4double vd1_z = 1.0*cm; // [mm] // Just for test, T.Gogami (20Aug2014)
-  //G4double vd1_z = 1.0*cm; // [mm]
   G4Box *vd1_box = new G4Box( "VD1_BOX",vd1_x/2.0 , vd1_y/2.0 , vd1_z/2.0 );
   G4LogicalVolume *vd1LV
     = new G4LogicalVolume( vd1_box , mList_->Vacuum , "VD1_LV");
-    //= new G4LogicalVolume( vd1_box , mList_->Pb208 , "VD1_LV");
-    //= new G4LogicalVolume( vd1_box , mList_->CH2 , "VD1_LV");
   
   G4PVPlacement *vd1 
     = new G4PVPlacement( 0 ,      //rotaion
