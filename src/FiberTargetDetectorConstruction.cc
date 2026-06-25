@@ -112,7 +112,7 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   //=== World ===//
   G4double WorldSizeX = 100.0*cm;
   G4double WorldSizeY = 100.0*cm;
-  G4double WorldSizeZ = 100.0*cm;
+  G4double WorldSizeZ = 200.0*cm;
   G4Box *worldSolid = new G4Box( "World",WorldSizeX/2.0,
 				 WorldSizeY/2.0,WorldSizeZ/2.0 );
   
@@ -383,11 +383,11 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   
   G4EllipticalTube* fiber_core_solid_x 
     = new G4EllipticalTube("fiber_core_solid_x",
-			   fiber_phi_core/2.0, fiber_phi_core/2.0, 50.0/2.0*mm );
+			   fiber_phi_core/2.0, fiber_phi_core/2.0, 51.15/2.0*mm );
   G4Tubs* fiber_clad_solid_x
     = new G4Tubs("fiber_clad_solid_x",
 		 fiber_phi_core/2.0, fiber_phi/2.0, //Min and Max radii
-		 5.0*cm/2.0,//height
+		 5.115*cm/2.0,//height
 		 0.0,//[rad]
 		 2.0*3.14159);//[rad]
   
@@ -409,11 +409,11 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   // ~~~~~~~ Create logical volumes of y layers ~~~~~~~~~~
   G4EllipticalTube* fiber_core_solid_y 
     = new G4EllipticalTube("fiber_core_solid_y",
-			   fiber_phi_core/2.0, fiber_phi_core/2.0, 10.0/2.0*cm );
+			   fiber_phi_core/2.0, fiber_phi_core/2.0, 10.075/2.0*cm );
   G4Tubs* fiber_clad_solid_y
     = new G4Tubs("fiber_clad_solid_y",
 		 fiber_phi_core/2.0, fiber_phi/2.0, //Min and Max radii
-		 10.0*cm/2.0,//height
+		 10.075*cm/2.0,//height
 		 0.0,//[rad]
 		 2.0*3.14159);//[rad]
   
@@ -573,28 +573,60 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   FiberYLV -> SetSensitiveDetector( targetSD_Y );
   
   
-  //Virtual Detector
-  G4ThreeVector vd1pos(0.0*cm , 0.0*cm , 8.5*cm);// for 15  cm target
-  G4double vd1_x = 50.0*cm;   // [cm]
-  G4double vd1_y = 50.0*cm;   // [cm]
-  G4double vd1_z = 0.001*mm; // [mm] // Default
-  G4Box *vd1_box = new G4Box( "VD1_BOX",vd1_x/2.0 , vd1_y/2.0 , vd1_z/2.0 );
-  G4LogicalVolume *vd1LV
-    = new G4LogicalVolume( vd1_box , mList_->Vacuum , "VD1_LV");
+  //BH2
+  G4ThreeVector bh2pos(-0.9*mm , -0.2*mm , -586.8*mm);
+  G4double bh2_x = 118.0*mm;
+  G4double bh2_y = 60.0*mm;
+  G4double bh2_z = 5.0*mm;
+  G4Box *bh2_box = new G4Box( "BH2_BOX",bh2_x/2.0 , bh2_y/2.0 , bh2_z/2.0 );
+  G4LogicalVolume *bh2LV
+    = new G4LogicalVolume( bh2_box , mList_->Scinti , "BH2_LV");
   
-  G4PVPlacement *vd1 
+  G4PVPlacement *bh2 
     = new G4PVPlacement( 0 ,      //rotaion
-			 vd1pos , //position
-			 vd1LV ,  //its logical volume
-			 "VD1" ,  //its name
+			 bh2pos , //position
+			 bh2LV ,  //its logical volume
+			 "BH2" ,  //its name
 			 worldLV ,//its mother
 			 false ,  //no boolean operation
 			 0 );     //copy number
+
+  //BAC1
+  G4ThreeVector bac1pos(0.0*mm , 0.0*mm , -3.25*mm);
+  G4double bac1_x = 170.0*mm;
+  G4double bac1_y = 70.0*mm;
+  G4double bac1_z = 46.0*mm;
+  G4Box *bac1_box = new G4Box( "BAC1_BOX",bac1_x/2.0 , bac1_y/2.0 , bac1_z/2.0 );
+  G4LogicalVolume *bac1LV
+    = new G4LogicalVolume( bac1_box , mList_->AC , "BAC1_LV");
   
-  G4String vdSDname1 = "/FiberTarget/VD1";
-  FiberTargetvdSD* vdSD1 = new FiberTargetvdSD( vdSDname1 , 1 , "VDCollection1" );
-  SDman -> AddNewDetector( vdSD1 );
-  vd1LV -> SetSensitiveDetector( vdSD1 );
+  G4PVPlacement *bac1
+    = new G4PVPlacement( 0 ,      //rotaion
+			 bac1pos , //position
+			 bac1LV ,  //its logical volume
+			 "BAC1" ,  //its name
+			 worldLV ,//its mother
+			 false ,  //no boolean operation
+			 0 );     //copy number
+
+  //BAC2
+  G4ThreeVector bac2pos(0.0*mm , 0.0*mm , -153.9*mm);
+  G4double bac2_x = 170.0*mm;
+  G4double bac2_y = 70.0*mm;
+  G4double bac2_z = 46.0*mm;
+  G4Box *bac2_box = new G4Box( "BAC2_BOX",bac2_x/2.0 , bac2_y/2.0 , bac2_z/2.0 );
+  G4LogicalVolume *bac2LV
+    = new G4LogicalVolume( bac2_box , mList_->AC , "BAC2_LV");
+  
+  G4PVPlacement *bac2
+    = new G4PVPlacement( 0 ,      //rotaion
+			 bac2pos , //position
+			 bac2LV ,  //its logical volume
+			 "BAC2" ,  //its name
+			 worldLV ,//its mother
+			 false ,  //no boolean operation
+			 0 );     //copy number
+
   
   //VD2
   //G4ThreeVector vd2pos(0.0*cm , 0.0*cm , 2.5*cm);
@@ -635,12 +667,20 @@ G4VPhysicalVolume *FiberTargetDetectorConstruction::ConstructPayload()
   G4VisAttributes *CladVisAtt = new G4VisAttributes(true, colourClad);
   CladXLV->SetVisAttributes(CladVisAtt);
   
-  //=== Virtual Detector ===//
+  //=== other Detectors ===//
   //vd1LV->SetVisAttributes(G4VisAttributes::Invisible);
-  G4Colour colourvd1(0.6, 0.5, 0.6); // 
-  G4VisAttributes *vd1VisAtt = new G4VisAttributes(true, colourvd1);
-  vd1LV->SetVisAttributes(vd1VisAtt);
-  
+  G4Colour colourbh2(0.6, 0.5, 0.6); // 
+  G4VisAttributes *bh2VisAtt = new G4VisAttributes(true, colourbh2);
+  bh2LV->SetVisAttributes(bh2VisAtt);
+
+  G4Colour colourbac1(0.6, 0.5, 0.6); // 
+  G4VisAttributes *bac1VisAtt = new G4VisAttributes(true, colourbac1);
+  bac1LV->SetVisAttributes(bac1VisAtt);
+
+  G4Colour colourbac2(0.6, 0.5, 0.6); // 
+  G4VisAttributes *bac2VisAtt = new G4VisAttributes(true, colourbac2);
+  bac2LV->SetVisAttributes(bac2VisAtt);
+
 
   return world;
 }
